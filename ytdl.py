@@ -10,7 +10,7 @@ def on_progress(stream, chunk, bytes_remaining):
 
 pbar = None  # Initialize pbar globally
 
-def download_video(url, output_path='./downloads/', video_quality='720p', video_only=False):
+def download_video(url, output_path='./downloads/', video_only=False):
     global pbar  # Use global pbar
     try:
         yt = YouTube(url, on_progress_callback=on_progress)
@@ -27,31 +27,17 @@ def download_video(url, output_path='./downloads/', video_quality='720p', video_
                 print("No audio stream found.")
                 return None
         else:
-            if video_quality == '1080p':
-                video_stream = yt.streams.filter(res='1080p', file_extension='mp4', progressive=True).first()
-                audio_stream = yt.streams.filter(only_audio=True).first()
-                if video_stream and audio_stream:
-                    print("Downloading...")
-                    pbar = tqdm(total=video_stream.filesize, unit='B', unit_scale=True, desc=video_stream.title)
-                    video_path = video_stream.download(output_path, filename='temp_video')
-                    pbar.close()
-                    print("Video download successful.")
-                    return video_path, audio_stream.download(output_path, filename='temp_audio')
-                else:
-                    print("No suitable video/audio streams found.")
-                    return None, None
+            video = yt.streams.filter(res='720p', file_extension='mp4', progressive=True).first()
+            if video:
+                print("Downloading...")
+                pbar = tqdm(total=video.filesize, unit='B', unit_scale=True, desc=video.title)
+                video_path = video.download(output_path, filename='temp')
+                pbar.close()
+                print("Download successful.")
+                return video_path
             else:
-                video = yt.streams.filter(res=video_quality, file_extension='mp4', progressive=True).first()
-                if video:
-                    print("Downloading...")
-                    pbar = tqdm(total=video.filesize, unit='B', unit_scale=True, desc=video.title)
-                    video_path = video.download(output_path, filename='temp')
-                    pbar.close()
-                    print("Download successful.")
-                    return video_path
-                else:
-                    print("No suitable video found.")
-                    return None
+                print("No suitable video found.")
+                return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
@@ -79,26 +65,11 @@ if __name__ == "__main__":
     video_url = input("Enter the YouTube URL: ")
     download_type = input("Enter 'v' to download video, 'a' to download audio only: ")
     if download_type.lower() == 'v':
-        video_quality = input("Enter '720p' or '1080p' for video quality: ")
-        if video_quality.lower() == '720p' or video_quality.lower() == '1080p':
-            download_result = download_video(video_url, video_quality=video_quality)
-            if download_result:
-                if isinstance(download_result, tuple):
-                    video_path, audio_path = download_result
-                    if audio_path:
-                        final_file = os.path.join(os.getcwd(), 'downloads', f'{YouTube(video_url).title}.mp4')
-                        merge_video_audio(video_path, audio_path, os.path.dirname(final_file))
-                        print(f"Video downloaded successfully as {final_file}")
-                    else:
-                        final_file = os.path.join(os.getcwd(), 'downloads', f'{YouTube(video_url).title}.mp4')
-                        shutil.move(video_path, final_file)
-                        print(f"Video downloaded successfully as {final_file}")
-                else:
-                    final_file = os.path.join(os.getcwd(), 'downloads', f'{YouTube(video_url).title}.mp4')
-                    shutil.move(download_result, final_file)
-                    print(f"Video downloaded successfully as {final_file}")
-        else:
-            print("Invalid video quality.")
+        download_result = download_video(video_url)
+        if download_result:
+            final_file = os.path.join(os.getcwd(), 'downloads', f'{YouTube(video_url).title}.mp4')
+            shutil.move(download_result, final_file)
+            print(f"Video downloaded successfully as {final_file}")
     elif download_type.lower() == 'a':
         audio_path = download_video(video_url, video_only=True)
         if audio_path:
