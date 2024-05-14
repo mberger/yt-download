@@ -14,8 +14,18 @@ python ytdl.py
 Playlist
 
 ```python
-python ytdl-playost.py
+python ytdl-playist.py
 ```
 
 
 Note: there is a problem with these if they are age protected. You will get an error.
+
+
+For the ytdl2.py file, you will also need to install ffmpeg.
+
+
+```bash
+brew install ffmpeg
+```
+
+
