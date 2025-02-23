@@ -11,9 +11,9 @@ def download_video(url, output_path='./downloads/', audio_only=False):
             'ignoreerrors': True,
             'noplaylist': True,  # Prevent downloading entire playlists
             'merge_output_format': 'mp4',
-            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+            'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]',  # Force 1080p max
             'postprocessors': [{'key': 'FFmpegVideoConvertor', 'preferedformat': 'mp4'}],
-            'concurrent_fragments': 5,  # Increases speed by downloading multiple fragments
+            'concurrent_fragments': 10,  # Increase parallel connections
         }
 
         if audio_only:
@@ -35,10 +35,13 @@ def download_video(url, output_path='./downloads/', audio_only=False):
 
 def convert_to_premiere_pro_compatible(input_file):
     try:
-        output_file = os.path.splitext(input_file)[0] + "_converted.mp4"
+        output_file = os.path.splitext(input_file)[0] + "_1080p.mp4"
+
+        # Use Apple Silicon's VideoToolbox hardware acceleration
         cmd = [
             "ffmpeg", "-y", "-i", input_file, 
-            "-c:v", "libx264", "-preset", "ultrafast", "-crf", "23", 
+            "-vf", "scale=1920:1080",  # Force 1080p resolution
+            "-c:v", "h264_videotoolbox", "-b:v", "8000k",  # Use Apple's VideoToolbox with 8Mbps bitrate
             "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", 
             "-threads", "0", output_file
         ]
