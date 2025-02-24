@@ -7,6 +7,7 @@ ytdl2.py is the main script moving forward.
 
 
 
+
 1. **Make sure you have** `ffmpeg` installed. Run:
 
    ```javascript
@@ -36,9 +37,15 @@ Added ytdl-AS.py, this script is optimized for Apple Silicone.
 This version **forces 1080p download** and **ensures Apple Silicon optimizations**.
 
 
+## **🔑 What’s New on Feb 24, 2025?**
+
+✅ **Creates a unique folder for each video** inside `./downloads/VideoTitle/` \n ✅**Handles special characters** in video titles to prevent file system errors \n ✅**Stores both the original and converted files in the same folder** \n ✅**Keeps everything neatly organized** 🎯
+
+
+
 ## **🔥 How This Ensures 1080p and Maximum Speed**
 
-✅ **Forces** `yt-dlp` to download at least 1080p \n ✅ **Uses Apple Silicon (**`h264_videotoolbox`) for ultra-fast conversion \n ✅ **Applies** `-vf scale=1920:1080` to enforce 1080p resolution \n ✅ **Increases bitrate to** `8000k` for better quality \n ✅ **Uses** `-threads 0` to enable multi-threading
+✅ **Forces** `yt-dlp`to download at least 1080p \n ✅**Uses Apple Silicon (**`h264_videotoolbox`) for ultra-fast conversion \n ✅**Applies** `-vf scale=1920:1080`to enforce 1080p resolution \n ✅**Increases bitrate to** `8000k`for better quality \n ✅**Uses** `-threads 0` to enable multi-threading
 
 
 **Uses** `h264_videotoolbox`for ultra-fast H.264 encoding \n ✅**Avoids unnecessary re-encoding when possible** \n ✅**Optimizes** `yt-dlp` to download the fastest compatible format
